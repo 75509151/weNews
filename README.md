@@ -1,8 +1,6 @@
 # weNews
 
 pyramid + react native
-
-
 # App
 
 ##### React Native:#####
