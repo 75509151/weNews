@@ -2,148 +2,80 @@ import React, { Component } from 'react';
 import{
   AppRegistry,
   Platform,
-  TouchableOpacity,
   StyleSheet,
   Navigator,
-  View,
-  Text,
-  ScrollView
+  BackAndroid,
+  ToastAndroid
 } from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo';
-import Tabbar, { Tab, RawContent, IconWithBar, glypyMapMaker } from 'react-native-tabbar';
-debugger;
-const glypy = glypyMapMaker({
-  Home: 'f286',
-  Camera: 'e901',
-  Stat: 'e902',
-  Settings: 'e903',
-  Favorite: 'e904'
-});
+
+import TabbarView from './TabbarView'
 
 export default class App extends Component {
   constructor(props, context) {
     super(props, context);
-    this.toggle = false;
   }
 
   componentDidMount() {
-    let toggle = "tab2";
-    setInterval(() => {
-      console.log(`goto ${toggle}`);
-      this.refs['myTabbar'].gotoTab(toggle);
-      toggle = toggle == "tab2"? "tab3" : "tab2";
-    }, 1000);
-
-
-
-    // let toggleShow = true;
-    // setInterval(() => {
-    //   toggleShow = !toggleShow;
-    //   this.refs['myTabbar'].getBarRef().show(toggleShow);
-    // }, 200);
-
-
-    setTimeout(() => {
-      this.refs['myTabbar'].gotoTab('camera');
-    }, 2000);
-
-    setTimeout(() => {
-      this.refs['myTabbar'].gotoTab("favorite");
-    }, 4000);
+     BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid);
   }
 
-  tabbarToggle() {
-    this.refs['myTabbar'].getBarRef().show(this.toggle);
-    this.toggle = !this.toggle;
+  componentWillUnmount(){
+    BackAndroid.removeEventListener('hardwareBackPress', this.onBackPressed);
   }
 
-  render() {
-    return (
-      <Tabbar ref="myTabbar" barColor={'gray'}>
-        <Tab name="home">
-          <IconWithBar label="Home" type={glypy.Home} from={'Entypo'}/>
-          <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>this.tabbarToggle()}>Toggle svdddd Tabbar</Text>
-            </View>
-          </RawContent>
-        </Tab>
-        <Tab name="camera">
-          <IconWithBar label="Camera" type={glypy.Camera} from={'icomoon'}/>
-          <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>console.log('camera')}>Camera</Text>
-            </View>
-          </RawContent>
-        </Tab>
-        <Tab name="stats">
-          <IconWithBar label="Stats" type={glypy.Stat} from={'icomoon'}/>
-          <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>console.log('stats')}>Stats</Text>
-            </View>
-          </RawContent>
-        </Tab>
-        <Tab name="favorite">
-          <IconWithBar label="Fav" type={glypy.Favorite} from={'icomoon'}/>
-          <RawContent>
-            <MyLongScrollView/>
-          </RawContent>
-        </Tab>
-        <Tab name="settings">
-          <IconWithBar label="Settings" type={glypy.Settings} from={'icomoon'}/>
-          <RawContent>
-            <View style={{ flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent:'center' }}>
-              <Text onPress={()=>console.log('settings')}>Settings</Text>
-            </View>
-          </RawContent>
-        </Tab>
-      </Tabbar>
-    );
-  }
-}
+  onBackAndroid = () => {
+   if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
+     //最近2秒内按过back键，可以退出应用。
+     return false;
+   }
 
-
-class MyLongScrollView extends Component {
-  constructor(props, context) {
-    super(props, context);
-  }
-
-  generateContents() {
-    let contents = [];
-    for (let i = 0; i < 200; i++) {
-      contents.push(
-        <Text key={i}>My Awesome Content {i}</Text>
-      );
-    }
-
-    return contents;
-  }
-
-  onScroll(e) {
-    const {
-      nativeEvent: {
-        contentOffset: { y }
+   const nav = this.navigator;
+    const routers = nav.getCurrentRoutes();
+    if (routers.length > 1) {
+      const top = routers[routers.length - 1];
+      if (top.ignoreBack || top.component.ignoreBack){
+        // 路由或组件上决定这个界面忽略back键
+        return true;
       }
-    } = e;
-
-    const { getBarRef } = this.context;
-    getBarRef().setBarHeight(y);
+      const handleBack = top.handleBack || top.component.handleBack;
+      if (handleBack) {
+        // 路由或组件上决定这个界面自行处理back键
+        return handleBack();
+      }
+      // 默认行为： 退出当前界面。
+      nav.pop();
+      return true;
+    }else {
+      this.lastBackPressed = Date.now();
+      ToastAndroid.show('再按一次退出应用',ToastAndroid.SHORT);
+      return true;
+    }
+ };
+  /**
+ * 配置场景动画
+ * @param route 路由
+ * @param routeStack 路由栈
+ * @returns {*} 动画
+ */
+  configureScene(route, routeStack) {
+    if (route.name === 'buttom') {
+      return Navigator.SceneConfigs.FloatFromBottom; // 底部弹出
+    }
+    return Navigator.SceneConfigs.PushFromRight; // 右侧弹出
+  }
+  renderScene(route, navigator) {
+    return <route.component navigator={navigator}  {...route.passProps} />;
   }
 
   render() {
     return (
-      <ScrollView
-        onScroll={this.onScroll.bind(this)}
-        scrollEventThrottle={16}
-        style={{ flex: 1}}
-        contentContainerStyle={{ alignItems: 'center' }}>
-        {this.generateContents()}
-      </ScrollView>
+      <Navigator
+       ref={nav => { this.navigator = nav; }}
+        style={{flex:1}}
+        initialRoute={{component: TabbarView}}
+        configureScene={this.configureScene}
+        renderScene={this.renderScene}
+       />
     );
   }
 }
-
-MyLongScrollView.contextTypes = {
-  getBarRef: React.PropTypes.func
-};
