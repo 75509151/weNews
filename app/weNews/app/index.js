@@ -9,6 +9,45 @@ import{
 } from 'react-native';
 
 import TabbarView from './TabbarView'
+//import PushNotification from "react-native-push-notification"
+var PushNotification = require('react-native-push-notification');
+import JPush , {JpushEventReceiveMessage, JpushEventOpenMessage} from 'react-native-jpush'
+
+PushNotification.configure({
+
+    // (optional) Called when Token is generated (iOS and Android)
+    onRegister: function(token) {
+        console.log( 'TOKEN:', token );
+    },
+
+    // (required) Called when a remote or local notification is opened or received
+    onNotification: function(notification) {
+        console.log( 'NOTIFICATION:', notification );
+    },
+
+    // ANDROID ONLY: (optional) GCM Sender ID.
+    senderID: "YOUR GCM SENDER ID",
+
+    // IOS ONLY (optional): default: all - Permissions to register.
+    permissions: {
+        alert: true,
+        badge: true,
+        sound: true
+    },
+
+    // Should the initial notification be popped automatically
+    // default: true
+    popInitialNotification: true,
+
+    /**
+      * IOS ONLY: (optional) default: true
+      * - Specified if permissions will requested or not,
+      * - if not, you must call PushNotificationsHandler.requestPermissions() later
+      */
+    requestPermissions: true,
+});
+
+
 
 export default class App extends Component {
   constructor(props, context) {
@@ -17,10 +56,23 @@ export default class App extends Component {
 
   componentDidMount() {
      BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid);
+     JPush.requestPermissions()
+     this.pushlisteners = [
+          JPush.addEventListener(JpushEventReceiveMessage, this.onReceiveMessage.bind(this)),
+          JPush.addEventListener(JpushEventOpenMessage, this.onOpenMessage.bind(this)),
+      ]
   }
 
   componentWillUnmount(){
     BackAndroid.removeEventListener('hardwareBackPress', this.onBackPressed);
+    this.pushlisteners.forEach(listener=> {
+        JPush.removeEventListener(listener);
+    });
+  }
+
+  onReceiveMessage(message) {
+  }
+  onOpenMessage(message) {
   }
 
   onBackAndroid = () => {

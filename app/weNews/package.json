@@ -8,7 +8,9 @@
   "dependencies": {
     "react": "15.0.2",
     "react-native": "^0.26.3",
+    "react-native-jpush": "^1.0.8",
     "react-native-nav": "^1.1.4",
+    "react-native-push-notification": "^1.0.7",
     "react-native-tab-navigator": "^0.3.2",
     "react-native-tabbar": "^0.3.6",
     "react-native-vector-icons": "^2.0.3"
