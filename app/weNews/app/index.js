@@ -5,47 +5,12 @@ import{
   StyleSheet,
   Navigator,
   BackAndroid,
-  ToastAndroid
+  ToastAndroid,
+  View
 } from 'react-native';
 
 import TabbarView from './TabbarView'
-//import PushNotification from "react-native-push-notification"
-var PushNotification = require('react-native-push-notification');
-import JPush , {JpushEventReceiveMessage, JpushEventOpenMessage} from 'react-native-jpush'
-
-PushNotification.configure({
-
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function(token) {
-        console.log( 'TOKEN:', token );
-    },
-
-    // (required) Called when a remote or local notification is opened or received
-    onNotification: function(notification) {
-        console.log( 'NOTIFICATION:', notification );
-    },
-
-    // ANDROID ONLY: (optional) GCM Sender ID.
-    senderID: "YOUR GCM SENDER ID",
-
-    // IOS ONLY (optional): default: all - Permissions to register.
-    permissions: {
-        alert: true,
-        badge: true,
-        sound: true
-    },
-
-    // Should the initial notification be popped automatically
-    // default: true
-    popInitialNotification: true,
-
-    /**
-      * IOS ONLY: (optional) default: true
-      * - Specified if permissions will requested or not,
-      * - if not, you must call PushNotificationsHandler.requestPermissions() later
-      */
-    requestPermissions: true,
-});
+import PushNotificationControler from './PushNotificationControler'
 
 
 
@@ -56,21 +21,15 @@ export default class App extends Component {
 
   componentDidMount() {
      BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid);
-     JPush.requestPermissions()
-     this.pushlisteners = [
-          JPush.addEventListener(JpushEventReceiveMessage, this.onReceiveMessage.bind(this)),
-          JPush.addEventListener(JpushEventOpenMessage, this.onOpenMessage.bind(this)),
-      ]
+
   }
 
   componentWillUnmount(){
     BackAndroid.removeEventListener('hardwareBackPress', this.onBackPressed);
-    this.pushlisteners.forEach(listener=> {
-        JPush.removeEventListener(listener);
-    });
   }
 
   onReceiveMessage(message) {
+
   }
   onOpenMessage(message) {
   }
@@ -121,13 +80,23 @@ export default class App extends Component {
 
   render() {
     return (
-      <Navigator
-       ref={nav => { this.navigator = nav; }}
-        style={{flex:1}}
-        initialRoute={{component: TabbarView}}
-        configureScene={this.configureScene}
-        renderScene={this.renderScene}
-       />
+      <View style={styles.container}>
+        <Navigator
+         ref={nav => { this.navigator = nav; }}
+          style={{flex:1}}
+          initialRoute={{component: TabbarView}}
+          configureScene={this.configureScene}
+          renderScene={this.renderScene}
+         />
+         <PushNotificationControler onReceiveMessage={this.onReceiveMessage.bind(this)} />
+       </View>
     );
   }
 }
+
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
