@@ -12,5 +12,6 @@
 *.cache
 *.ilk
 *.log
+*.pyc
 [Bb]in
 [Dd]ebug*/
