@@ -1,0 +1,5 @@
+      [paste.app_factory]
+      main = wenewsserver:main
+      [console_scripts]
+      initialize_weNewsServer_db = wenewsserver.scripts.initializedb:main
+      

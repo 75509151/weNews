@@ -1,0 +1,3 @@
+[run]
+source = wenewsserver
+omit = wenewsserver/test*
