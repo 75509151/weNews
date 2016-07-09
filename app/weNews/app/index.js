@@ -82,8 +82,8 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <Navigator
-         ref={nav => { this.navigator = nav; }}
-          style={{flex:1}}
+          ref={nav => { this.navigator = nav; }}
+          style={{flex:1}} 
           initialRoute={{component: TabbarView}}
           configureScene={this.configureScene}
           renderScene={this.renderScene}
