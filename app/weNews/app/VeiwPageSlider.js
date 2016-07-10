@@ -4,13 +4,14 @@ import {
   Text,
   View,
   Dimensions,
+  TouchableOpacity
 } from 'react-native';
 
 import Image from 'react-native-image-progress';
 import ViewPager from 'react-native-viewpager';
 //var ViewPager = require('./ViewPager');
 var deviceWidth = Dimensions.get('window').width;
-
+debugger;
 var IMGS = [
   'https://images.unsplash.com/photo-1441742917377-57f78ee0e582?h=1024',
   'https://images.unsplash.com/photo-1441716844725-09cedc13a4e7?h=1024',
@@ -30,22 +31,36 @@ export default class  VeiwPageSlider extends Component {
     }
 
     render(){
-       return (<ViewPager 
-                    style={this.props.style}
-                    dataSource={this.rowSource}
-                    renderPage={this._renderPage}
-                    isLoop={true}
-                    autoPlay={true}
-                 />)
-
+       return (
+              <View>
+                    <ViewPager 
+                          style={styles.page}
+                          dataSource={this.rowSource}
+                          renderPage={this._renderPage}
+                          isLoop={true}
+                          autoPlay={true}
+                      />
+                </View>)
     }
 
     // render every page
-    _renderPage(pageData){
-        return (<Image
-                    source={{uri: pageData}}
-                    style={styles.page}
-                />)        
+    _renderPage(pageData,pageId){
+        return ( <TouchableOpacity style={{flex: 1}}>
+        <Image
+          source={{uri: pageData}}
+          style={styles.headerItem} >
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}
+              numberOfLines={2}>
+              {'this is a tessst'+pageId}
+            </Text>
+          </View>
+        </Image>
+      </TouchableOpacity>
+      )        
+
+
+
     }
 
 
@@ -54,6 +69,27 @@ export default class  VeiwPageSlider extends Component {
 
 var styles = StyleSheet.create({
   page: {
-    width: deviceWidth,
+    height: 200,
+ 
+  },
+  headerPager: {
+    height: 200,
+  },
+  headerItem: {
+    flex:1,
+    height: 200,
+    flexDirection: 'row',
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'white',
+    marginBottom: 10,
   },
 });

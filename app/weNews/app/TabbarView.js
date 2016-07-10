@@ -260,6 +260,7 @@ var styles = StyleSheet.create({
     fontSize: 18
   },
   viewpager: {
+    height:200,
     flex: 1,
   },
 });
