@@ -5,10 +5,14 @@ import{
   StyleSheet,
   Navigator,
   BackAndroid,
-  ToastAndroid
+  ToastAndroid,
+  View
 } from 'react-native';
 
 import TabbarView from './TabbarView'
+import PushNotificationControler from './PushNotificationControler'
+
+
 
 export default class App extends Component {
   constructor(props, context) {
@@ -17,10 +21,17 @@ export default class App extends Component {
 
   componentDidMount() {
      BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid);
+
   }
 
   componentWillUnmount(){
     BackAndroid.removeEventListener('hardwareBackPress', this.onBackPressed);
+  }
+
+  onReceiveMessage(message) {
+
+  }
+  onOpenMessage(message) {
   }
 
   onBackAndroid = () => {
@@ -69,13 +80,23 @@ export default class App extends Component {
 
   render() {
     return (
-      <Navigator
-       ref={nav => { this.navigator = nav; }}
-        style={{flex:1}}
-        initialRoute={{component: TabbarView}}
-        configureScene={this.configureScene}
-        renderScene={this.renderScene}
-       />
+      <View style={styles.container}>
+        <Navigator
+          ref={nav => { this.navigator = nav; }}
+          style={{flex:1}} 
+          initialRoute={{component: TabbarView}}
+          configureScene={this.configureScene}
+          renderScene={this.renderScene}
+         />
+         <PushNotificationControler onReceiveMessage={this.onReceiveMessage.bind(this)} />
+       </View>
     );
   }
 }
+
+
+var styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
