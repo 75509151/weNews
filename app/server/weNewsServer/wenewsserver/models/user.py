@@ -1,4 +1,5 @@
 import bcrypt
+
 from sqlalchemy import(
 	Column,
 	Integer,
@@ -10,8 +11,10 @@ from .meta import Base
 
 
 class User(Base):
-	"""docstring for User"""
-	__tablename__ = "users"
+	"""
+	docstring for User
+	"""
+	__tablename__ = 'users'
 	id = Column(Integer, primary_key=True, autoincrement=True)
 	name = Column(Text, nullable=False, unique=True)
 	password = Column(Text, nullable=False)
@@ -24,3 +27,8 @@ class User(Base):
 		if not pw and pw == self.password:
 			return True
 		return False
+
+	def __init__(self, name, password, sex=1):
+		self.name = name
+		self.password = password
+		self.sex = sex

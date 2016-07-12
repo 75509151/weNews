@@ -16,7 +16,7 @@ from ..models import (
     get_tm_session,
     )
 from ..models import MyModel
-
+# from ..user import User
 
 def usage(argv):
     cmd = os.path.basename(argv[0])
